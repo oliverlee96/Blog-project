@@ -8,9 +8,13 @@ router.get('/', function(req, res) {
  res.redirect('/posts');
 });
 
-router.get('/posts', function(req, res) {
-    db.query('SELECT * FROM posts INNER JOIN authors ON posts.author_id = authors.id')
-    res.render('posts-list');
+router.get('/posts', async function(req, res) {
+    const query = `
+    SELECT posts.*,authors.name AS author_name FROM posts 
+    INNER JOIN authors ON posts.author_id = authors.id
+    `;
+    const [posts] = await db.query(query); //remember that query returns array with 2 items
+    res.render('posts-list', {posts: posts});
 });
 
 router.get('/new-post', async function(req, res) {
